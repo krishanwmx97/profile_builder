@@ -1,13 +1,8 @@
 from langchain_openai import OpenAI
 from langchain_core.prompts import PromptTemplate
 from langchain.chains import LLMChain
-from dotenv import load_dotenv
-import os
-import json
 import streamlit as st
-
-# Load environment variables from .env
-load_dotenv()
+import json
 
 st.title('Welcome to the AI Profiler')
 
@@ -19,7 +14,7 @@ if 'user_data' not in st.session_state:
 
 class ProfileBuilder:
     def __init__(self):
-        self.openai = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+        self.openai = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
         self.questions = [
             "name",
             "work location",

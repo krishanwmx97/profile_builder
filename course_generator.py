@@ -2,19 +2,13 @@ import json
 from langchain_openai import OpenAI
 from langchain.prompts import PromptTemplate
 from langchain_core.runnables import RunnableSequence
-from dotenv import load_dotenv
-import os
-import random
 import streamlit as st
 
-# Load environment variables from .env
-load_dotenv()
-
 # Initialize OpenAI with API key
-openai = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+openai = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
 
 # Available topics for training (hardcoded)
-topics = ["Conflicts of interest", "Anti-Bribery and Corruption", "Data Protection", "Speaking Up"]  # remove all but 1 to just have that topic
+topics = ["Conflicts of interest", "Anti-Bribery and Corruption", "Data Protection", "Speaking Up"]
 
 # Load user profile from JSON file
 def load_user_profile(uploaded_file):
