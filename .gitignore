@@ -7,3 +7,5 @@ env/
 # Ignore environment variable files
 .env
 *.env
+
+.streamlit/
