@@ -17,13 +17,12 @@ openai = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 topics = ["Conflicts of interest", "Anti-Bribery and Corruption", "Data Protection", "Speaking Up"]  # remove all but 1 to just have that topic
 
 # Load user profile from JSON file
-def load_user_profile():
+def load_user_profile(uploaded_file):
     try:
-        with open('user_profile.json', 'r') as f:
-            user_data = json.load(f)
+        user_data = json.load(uploaded_file)
         return user_data
-    except FileNotFoundError:
-        st.error("User profile not found!")
+    except Exception as e:
+        st.error(f"An error occurred while loading the user profile: {e}")
         return {}
 
 # Function to validate user input against available options using OpenAI
@@ -130,32 +129,34 @@ def generate_question(scenario, topic):
 
 # Start training process in Streamlit
 def start_training():
-    user_profile = load_user_profile()
+    uploaded_file = st.file_uploader("Upload your profile JSON file", type="json")
+    if uploaded_file is not None:
+        user_profile = load_user_profile(uploaded_file)
 
-    if not user_profile:
-        st.error("Unable to load user profile. Please ensure it exists.")
-        return
+        if not user_profile:
+            st.error("Unable to load user profile. Please ensure it exists.")
+            return
 
-    user_name = user_profile.get("name", "User")
-    st.write(generate_welcome_message(user_name, user_profile))
+        user_name = user_profile.get("name", "User")
+        st.write(generate_welcome_message(user_name, user_profile))
 
-    # Topic selection
-    topic = st.selectbox("Please choose the topic for your training:", topics)
-    if topic:
-        st.success(f"You've chosen: {topic}")
+        # Topic selection
+        topic = st.selectbox("Please choose the topic for your training:", topics)
+        if topic:
+            st.success(f"You've chosen: {topic}")
 
-    # Training introduction
-    if st.button("Start Training"):
-        st.write(generate_training_intro(topic))
+        # Training introduction
+        if st.button("Start Training"):
+            st.write(generate_training_intro(topic))
 
-        # Generate a scenario and question
-        scenario = generate_scenario(topic, user_profile)
-        st.write(f"**Scenario:**\n\n")
-        st.write(f"{scenario}")
+            # Generate a scenario and question
+            scenario = generate_scenario(topic, user_profile)
+            st.write(f"**Scenario:**\n\n")
+            st.write(f"{scenario}")
 
-        question = generate_question(scenario, topic)
-        st.write(f"**Question: What would you advise?**\n\n")
-        st.write(f"{question}")        
+            question = generate_question(scenario, topic)
+            st.write(f"**Question: What would you advise?**\n\n")
+            st.write(f"{question}")        
 
 # Run training
 start_training()
